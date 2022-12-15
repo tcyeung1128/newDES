@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { encryptHelper, decryptHelper } from "../../helpers/desHelper";
 import { Button, TextField } from "@mui/material";
+// import HKITLOGO from "../../../public/HKITLOGO.png";
 
 export default function DES() {
   const [plaintext, setPlaintext] = useState("");
@@ -11,13 +12,13 @@ export default function DES() {
   const [decrypted, setDecrypted] = useState("");
 
   function encryptPlain() {
-    let res = encryptHelper(plaintext, plainKey);
+    let res = encryptHelper(String(plaintext), String(plainKey));
     console.log("Encrypted res: ", res);
     setEncrypted(res);
   }
 
   function decryptCipher() {
-    let res = decryptHelper(ciphertext, cipherKey);
+    let res = decryptHelper(String(ciphertext), String(cipherKey));
     console.log("Decrypted res: ", res);
     setDecrypted(res);
   }
