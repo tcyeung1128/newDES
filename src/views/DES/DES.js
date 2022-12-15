@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { encryptHelper, decryptHelper } from "../../helpers/desHelper";
-import { Button, InputAdornment, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 export default function DES() {
   const [plaintext, setPlaintext] = useState("");

@@ -14,6 +14,9 @@ header {
   margin-bottom: 20px;
   font-weight: 700;
 }
+header > div {
+  padding: 3px 20px;
+}
 
 #des-demo {
   display: flex;
