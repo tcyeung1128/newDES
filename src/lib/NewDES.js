@@ -1,37 +1,106 @@
-/** PC1-Table: For key creation's compression permutation (64-bit > 56-bit) */
-const PC1 = [
+//string to array
+function stringToArray(string) {
+  let array = new Array(string.length);
+  for (let i = 0; i < string.length; i++) {
+    array[i] = string.charAt(i);
+  }
+  return array;
+}
+
+//array to string
+function ArrayToString(array) {
+  let string = array.join("");
+  return string;
+}
+
+//array內容轉ascii 2進制
+function arrayToASCII(array) {
+  let ASCII = new Array(array.length);
+  for (let i = 0; i < array.length; i++) {
+    ASCII[i] = 0 + "" + array[i].charCodeAt(0).toString(2);
+  }
+  return ASCII;
+}
+
+//2進制array轉10進制array
+function binToDec(array) {
+  for (let i = 0; i < array.length; i++) {
+    array[i] = parseInt(array[i], 2);
+  }
+  return array;
+}
+
+//2進制轉ascii array
+function binToASCII(array) {
+  for (let i = 0; i < array.length; i++) {
+    array[i] = String.fromCharCode(parseInt(array[i], 2));
+  }
+  return array;
+}
+
+//2條array合併成1條array
+function twoToOne(LArray, RArray) {
+  let array = new Array();
+  for (let i = 0; i < LArray.length; i++) {
+    array.push(LArray[i]);
+  }
+  for (let i = 0; i < RArray.length; i++) {
+    array.push(RArray[i]);
+  }
+  return array;
+}
+
+//array半開左右兩半，取前半部份
+function getLArray(array) {
+  let x = array.length / 2;
+  let LArray = new Array(x);
+  for (let i = 0; i < x; i++) {
+    LArray[i] = array[i];
+  }
+  let Rarray = new Array(x);
+  for (let i = x; i < x * 2; i++) {
+    Rarray[i - x] = array[i];
+  }
+  return LArray;
+}
+
+//array半開左右兩半，取後半部份
+function getRArray(array) {
+  let x = array.length / 2;
+  let LArray = new Array(x);
+  for (let i = 0; i < x; i++) {
+    LArray[i] = array[i];
+  }
+  let Rarray = new Array(x);
+  for (let i = x; i < x * 2; i++) {
+    Rarray[i - x] = array[i];
+  }
+  return Rarray;
+}
+
+var PC1 = [
   58, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35,
   27, 19, 11, 3, 60, 52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38,
   30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4,
 ];
-
-/** L-Shift Table: For 16 subkey generation */
-const KEY_SHIFT_LIST = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1];
-
-/** PC2-Table: For transposition of the generated 16 subkeys (56-bit > 48-bit) */
-const PC2 = [
+var keyShiftList = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1];
+var PC2 = [
   14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27,
   20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34,
   53, 46, 42, 50, 36, 29, 32,
 ];
-
-/** Initial Permutation Table: For plaintext initial permutation (64-bit > 64-bit) */
-const INITIAL_IP_TABLE = [
+var initialIP = [
   58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38,
   30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1,
   59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39,
   31, 23, 15, 7,
 ];
-
-/** Expansion Box: For right half of plaintext's expansion permutation (32-bit > 48-bit) */
-const E_BOX = [
+var EBox = [
   32, 1, 2, 3, 4, 5, 4, 5, 6, 7, 8, 9, 8, 9, 10, 11, 12, 13, 12, 13, 14, 15, 16,
   17, 16, 17, 18, 19, 20, 21, 20, 21, 22, 23, 24, 25, 24, 25, 26, 27, 28, 29,
   28, 29, 30, 31, 32, 1,
 ];
-
-/** Substitution Box: For right half 8 6-bit blocks > 8 4-bit blocks substitution (Total size 48-bit > 32-bit) */
-const S_BOX = [
+var SBox = [
   // S-Box 1
   [
     [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7],
@@ -89,63 +158,17 @@ const S_BOX = [
     [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11],
   ],
 ];
-
-/** Permutation Box: For right half permutation (32-bit > 32-bit) */
-const P_BOX = [
+var PBox = [
   16, 7, 20, 21, 29, 12, 28, 17, 1, 15, 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32,
   27, 3, 9, 19, 13, 30, 6, 22, 11, 4, 25,
 ];
-
-/** Final Permutation Table: For the final transposition of message data (64-bit > 64-bit) */
-const finalIP = [
+var finalIP = [
   40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38, 6, 46, 14,
-  54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 2, 60, 28,
+  54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28,
   35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9,
   49, 17, 57, 25,
 ];
 
-// Split string to array
-function stringToArray(string) {
-  return string.split("");
-}
-
-// Join array to string
-function ArrayToString(array) {
-  return array.join("");
-}
-
-// TODO: DEBUG Convert array char element to ASCII binary
-function arrayToASCII(array) {
-  let ASCII = new Array(array.length);
-  for (let i = 0; i < array.length; i++) {
-    ASCII[i] = 0 + "" + array[i].charCodeAt(0).toString(2);
-  }
-  return ASCII;
-}
-
-// Convert binary element to decimal
-function binToDec(array) {
-  let decArray = array.map((el) => parseInt(el, 2));
-  return decArray;
-}
-
-// Convert binary element to ASCII char
-function binToASCII(array) {
-  let asciiCharArray = array.map((el) => String.fromCharCode(parseInt(el, 2)));
-  return asciiCharArray;
-}
-
-// Get the first half of the array
-function getLArray(array) {
-  return array.slice(0, array.length / 2);
-}
-
-// Get the last half of the array
-function getRArray(array) {
-  return array.slice(array.length / 2);
-}
-
-// Create 16 48-bit subkeys from a 64-bit key
 function createKey(key) {
   let keyList = arrayToASCII(key);
   for (let i = 0; i < 8; i++) {
@@ -155,7 +178,8 @@ function createKey(key) {
   }
   keyList = ArrayToString(keyList);
   keyList = stringToArray(keyList);
-  // PC1-Box Transposition
+
+  //PC1置換
   let PC1change = new Array(56);
   for (let i = 0; i < PC1.length; i++) {
     PC1change[i] = keyList[PC1[i] - 1];
@@ -163,19 +187,19 @@ function createKey(key) {
   let LKey = getLArray(PC1change);
   let RKey = getRArray(PC1change);
 
-  // PC2-Box 16 Iteration
+  //PC2 16次置換
   let subKey = new Array();
-  for (let i = 0; i < KEY_SHIFT_LIST.length; i++) {
+  for (let i = 0; i < keyShiftList.length; i++) {
     let LKeyTemp = new Array(28);
     let RKeyTemp = new Array(28);
-    if (KEY_SHIFT_LIST[i] === 1) {
+    if (keyShiftList[i] === 1) {
       LKeyTemp[27] = LKey[0];
       RKeyTemp[27] = RKey[0];
       for (let j = 0; j < 27; j++) {
         LKeyTemp[j] = LKey[j + 1];
         RKeyTemp[j] = RKey[j + 1];
       }
-    } else if (KEY_SHIFT_LIST[i] === 2) {
+    } else if (keyShiftList[i] === 2) {
       LKeyTemp[26] = LKey[0];
       RKeyTemp[26] = RKey[0];
       LKeyTemp[27] = LKey[1];
@@ -190,7 +214,7 @@ function createKey(key) {
     LKey = LKeyTemp;
     RKey = RKeyTemp;
     let keyTemp = new Array();
-    let PC2array = LKey.concat(RKey);
+    let PC2array = twoToOne(LKey, RKey);
     for (let i = 0; i < PC2.length; i++) {
       keyTemp.push(PC2array[PC2[i] - 1]);
     }
@@ -200,10 +224,10 @@ function createKey(key) {
 }
 
 function encrypt(plaintext, key) {
-  // Create subkeys
+  //get subKey
   let subKey = createKey(key);
 
-  // Convert plaintext to ASCII binary
+  //明文轉成ASCII 2進制
   let plaintextList = arrayToASCII(stringToArray(plaintext));
   while (plaintextList.length < 8) {
     plaintextList.push("00000000");
@@ -215,34 +239,26 @@ function encrypt(plaintext, key) {
   }
   plaintextList = stringToArray(ArrayToString(plaintextList));
 
-  // Initial Permutation
+  //初始置換
   let initialIPTemp = new Array();
-  for (let i = 0; i < INITIAL_IP_TABLE.length; i++) {
-    initialIPTemp.push(plaintextList[INITIAL_IP_TABLE[i] - 1]);
+  for (let i = 0; i < initialIP.length; i++) {
+    initialIPTemp.push(plaintextList[initialIP[i] - 1]);
   }
-
-  // New Feature!! Left Shift
-  for (let i = 0; i < initialIPTemp.length; i++) {
-    plaintextList[63] = initialIPTemp[0];
-    for (let j = 0; j < 62; j++) {
-      plaintextList[j] = initialIPTemp[j + 1];
-    }
-  }
-
-  // Split the plaintext into left and right halves
+  plaintextList = ArrayToString(initialIPTemp);
+  //初始轉換後的明文分成左右
+  plaintextList = stringToArray(plaintextList);
   let LText = getLArray(plaintextList);
   let RText = getRArray(plaintextList);
 
-  // Plaintext right side encode with 16 subkeys
-  // E-Box expansion permutaion
+  //明文與key 16次迭代
   for (let k = 0; k < 16; k++) {
     let LPart = RText;
     let RPart = new Array();
-    for (let i = 0; i < E_BOX.length; i++) {
-      RPart.push(RText[E_BOX[i] - 1]);
+    for (let i = 0; i < EBox.length; i++) {
+      RPart.push(RText[EBox[i] - 1]);
     }
 
-    // E(R)（48-bit）XOR with K（48-bit)
+    //将E(R0)（48位）与K1（48位）作XOR运算, subKey[i]
     for (let i = 0; i < RPart.length; i++) {
       RPart[i] = RPart[i] ^ subKey[k][i];
     }
@@ -253,34 +269,20 @@ function encrypt(plaintext, key) {
       RPartArray[i] = RPart.slice(0 + x, 6 + x);
     }
 
-    // S-Box Substitution
     for (let i = 0; i < 8; i++) {
       let x = parseInt(RPartArray[i].charAt(0) + RPartArray[i].charAt(5), 2);
       let y = parseInt(RPartArray[i].slice(1, 5), 2);
-      RPartArray[i] = S_BOX[i][x][y].toString(2);
+      RPartArray[i] = SBox[i][x][y].toString(2);
       while (RPartArray[i].length != 4) {
         RPartArray[i] = "0" + RPartArray[i];
       }
     }
 
-    // P-Box Permutation
     RPartArray = stringToArray(ArrayToString(RPartArray));
     let RPartTempArray = new Array();
-    for (let i = 0; i < P_BOX.length; i++) {
-      RPartTempArray.push(RPartArray[P_BOX[i] - 1]);
+    for (let i = 0; i < PBox.length; i++) {
+      RPartTempArray.push(RPartArray[PBox[i] - 1]);
     }
-
-    // New Feature!! Right Shift
-    let RPartTempArray2 = new Array(RPartTempArray.length);
-    for (let i = 0; i < RPartTempArray.length; i++) {
-      RPartTempArray2[0] = RPartTempArray[31];
-      for (let j = 1; j < 32; j++) {
-        RPartTempArray2[j] = RPartTempArray[j - 1];
-      }
-    }
-    RPartTempArray = RPartTempArray2;
-
-    // Right half XOR with Left half
     for (let i = 0; i < RPartTempArray.length; i++) {
       RPartTempArray[i] = RPartTempArray[i] ^ LText[i];
     }
@@ -289,9 +291,7 @@ function encrypt(plaintext, key) {
     RText = RPartTempArray;
   }
 
-  plaintextList = LText.concat(RText);
-
-  // Final Permutation with IP^-1 table
+  plaintextList = twoToOne(LText, RText);
   let finalmsg = new Array(64);
   for (let i = 0; i < finalIP.length; i++) {
     finalmsg[[finalIP[i] - 1]] = plaintextList[i];
@@ -324,6 +324,7 @@ function encrypt(plaintext, key) {
 
   let ciphertext = ArrayToString(reverseText);
 
+  // let ciphertext = ArrayToString(finalmsg);
   return ciphertext;
 }
 
@@ -332,7 +333,8 @@ function decrypt(ciphertext, key) {
   //ciphertext be array and get subKey
   let subKey = createKey(key);
   let cipherList = stringToArray(ciphertext);
-  //blend key and ciphertext
+
+  // Unblend key and ciphertext
   let keyList = arrayToASCII(stringToArray(key));
   for (let i = 0; i < 8; i++) {
     while (keyList[i].length != 8) {
@@ -357,18 +359,20 @@ function decrypt(ciphertext, key) {
     finalmsg[i] = blendKey[i] ^ keyList[i];
   }
 
+  // let finalmsg = new Array(64);
   for (let i = 0; i < finalIP.length; i++) {
     cipherList[i] = finalmsg[[finalIP[i] - 1]];
   }
-
+  //
   let LText = getLArray(cipherList);
   let RText = getRArray(cipherList);
+
   for (let k = 15; k > -1; k--) {
     let LPart = new Array();
     let RPart = LText;
 
-    for (let i = 0; i < E_BOX.length; i++) {
-      LPart.push(LText[E_BOX[i] - 1]);
+    for (let i = 0; i < EBox.length; i++) {
+      LPart.push(LText[EBox[i] - 1]);
     }
 
     for (let i = 0; i < LPart.length; i++) {
@@ -384,45 +388,28 @@ function decrypt(ciphertext, key) {
     for (let i = 0; i < 8; i++) {
       let x = parseInt(RPartArray[i].charAt(0) + RPartArray[i].charAt(5), 2);
       let y = parseInt(RPartArray[i].slice(1, 5), 2);
-      RPartArray[i] = S_BOX[i][x][y].toString(2);
+      RPartArray[i] = SBox[i][x][y].toString(2);
       while (RPartArray[i].length != 4) {
         RPartArray[i] = "0" + RPartArray[i];
       }
     }
-    //P box後右移一個位
+
     RPartArray = stringToArray(ArrayToString(RPartArray));
     let RPartTempArray = new Array();
-    for (let i = 0; i < P_BOX.length; i++) {
-      RPartTempArray.push(RPartArray[P_BOX[i] - 1]);
+    for (let i = 0; i < PBox.length; i++) {
+      RPartTempArray.push(RPartArray[PBox[i] - 1]);
     }
-    let RPartTempArray2 = new Array(RPartTempArray.length);
-    for (let i = 0; i < RPartTempArray.length; i++) {
-      RPartTempArray2[0] = RPartTempArray[31];
-      for (let j = 1; j < 32; j++) {
-        RPartTempArray2[j] = RPartTempArray[j - 1];
-      }
-    }
-    RPartTempArray = RPartTempArray2;
-    //與左明文XOR
     for (let i = 0; i < RPartTempArray.length; i++) {
       RPartTempArray[i] = RPartTempArray[i] ^ RText[i];
     }
     LText = RPartTempArray;
     RText = RPart;
   }
-  let plaintextList = LText.concat(RText);
+  let initialIPTemp = twoToOne(LText, RText);
 
-  let initialIPTemp = new Array(plaintextList.length);
-  //初始置換後左移1個位
-  for (let i = 0; i < plaintextList.length; i++) {
-    initialIPTemp[0] = plaintextList[63];
-    for (let j = 1; j < 64; j++) {
-      initialIPTemp[j] = plaintextList[j - 1];
-    }
-  }
-  //初始置換
-  for (let i = 0; i < INITIAL_IP_TABLE.length; i++) {
-    plaintextList[[INITIAL_IP_TABLE[i] - 1]] = initialIPTemp[i];
+  let plaintextList = new Array(initialIPTemp.length);
+  for (let i = 0; i < initialIP.length; i++) {
+    plaintextList[[initialIP[i] - 1]] = initialIPTemp[i];
   }
 
   let plaintext = new Array();
@@ -431,13 +418,11 @@ function decrypt(ciphertext, key) {
     plaintext[i] = ArrayToString(plaintextList).slice(0 + x, 8 + x);
   }
   plaintext = ArrayToString(binToASCII(plaintext));
-
   return plaintext;
 }
 
-//crypto text=Plaintext or Ciphertext, key=key, acrion, 0=encrypt, 1= decrypt
 export function crypto(text, key, action) {
-  if (action == 0 && key.length === 8) {
+  if (action == 0 && key.length >= 8) {
     let textList = new Array();
     let l = 0;
     while (text.length > l * 8) {
@@ -450,7 +435,7 @@ export function crypto(text, key, action) {
       newText = newText + encrypt(textList[i], key);
     }
     return newText;
-  } else if (action == 1 && key.length === 8) {
+  } else if (action == 1 && key.length >= 8) {
     let textList = new Array();
     let l = 0;
     while (text.length > l * 64) {
@@ -464,10 +449,10 @@ export function crypto(text, key, action) {
     }
     return newText;
   } else {
-    return "acrion, 0=encrypt, 1= decrypt and key must 8btye";
+    return "key must more then 7btye";
   }
 }
 
-// let test = crypto("computer", "12345678", 0);
-// console.log("Ciphertext: ", test);
-// console.log("Plaintext: ", crypto(test, "12345678", 1));
+let test = crypto("i love hkit", "123456711", 0);
+console.log("密文=", test);
+console.log(crypto(test, "123456711", 1));

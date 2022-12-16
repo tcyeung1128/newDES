@@ -13,13 +13,11 @@ export default function DES() {
 
   function encryptPlain() {
     let res = encryptHelper(String(plaintext), String(plainKey));
-    console.log("Encrypted res: ", res);
     setEncrypted(res);
   }
 
   function decryptCipher() {
     let res = decryptHelper(String(ciphertext), String(cipherKey));
-    console.log("Decrypted res: ", res);
     setDecrypted(res);
   }
 

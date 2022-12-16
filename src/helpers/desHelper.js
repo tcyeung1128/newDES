@@ -1,4 +1,5 @@
-import { crypto } from "../lib/DES";
+// import { crypto } from "../lib/OldDES";
+import { crypto } from "../lib/NewDES";
 
 export const encryptHelper = (plaintext, key) => {
   return crypto(plaintext, key, 0);
