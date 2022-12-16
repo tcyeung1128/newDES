@@ -1,4 +1,3 @@
-// import { crypto } from "../lib/OldDES";
 import { crypto } from "../lib/NewDES";
 
 export const encryptHelper = (plaintext, key) => {
