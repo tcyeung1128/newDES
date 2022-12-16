@@ -99,17 +99,12 @@ var finalIP = [
 
 // Split string to array
 function stringToArray(string) {
-  let array = new Array(string.length);
-  for (let i = 0; i < string.length; i++) {
-    array[i] = string.charAt(i);
-  }
-  return array;
+  return string.split("");
 }
 
 // Join array to string
 function ArrayToString(array) {
-  let string = array.join("");
-  return string;
+  return array.join("");
 }
 
 // Convert array char element to ASCII binary
@@ -138,44 +133,16 @@ function binToASCII(array) {
 }
 
 function twoToOne(LArray, RArray) {
-  // let array = new Array();
-  // for (let i = 0; i < LArray.length; i++) {
-  //   array.push(LArray[i]);
-  // }
-  // for (let i = 0; i < RArray.length; i++) {
-  //   array.push(RArray[i]);
-  // }
-  // return array;
   return LArray.concat(RArray);
 }
 
 // Get the first half of the array
 function getLArray(array) {
-  // let x = array.length / 2;
-  // let LArray = new Array(x);
-  // for (let i = 0; i < x; i++) {
-  //   LArray[i] = array[i];
-  // }
-  // let Rarray = new Array(x);
-  // for (let i = x; i < x * 2; i++) {
-  //   Rarray[i - x] = array[i];
-  // }
-  // return LArray;
   return array.slice(0, array.length / 2);
 }
 
 // Get the last half of the array
 function getRArray(array) {
-  // let x = array.length / 2;
-  // let LArray = new Array(x);
-  // for (let i = 0; i < x; i++) {
-  //   LArray[i] = array[i];
-  // }
-  // let Rarray = new Array(x);
-  // for (let i = x; i < x * 2; i++) {
-  //   Rarray[i - x] = array[i];
-  // }
-  // return Rarray;
   return array.slice(array.length / 2);
 }
 
