@@ -24,9 +24,6 @@ export default function DES() {
   return (
     <>
       <header>
-        <div>CS407 - Applied Cryptography</div>
-        <div>Group 5 Assignment</div>
-        <div>New-DES Encryption Scheme Demonstration</div>
       </header>
 
       <section id="des-demo">
